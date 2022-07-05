@@ -18,7 +18,7 @@ $query = mysqli_query($conn, "INSERT INTO test_1 VALUES (NULL,'Joel')");
 </head>
 
 <body>
-  TEST
+  TEST2
 </body>
 
 </html>
