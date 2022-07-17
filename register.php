@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
 session_start();
 $conn = mysqli_connect('localhost', 'root', '', 'social');
 
@@ -108,18 +112,28 @@ if (empty($error_array)) {
     $username = $username . "_" . $i;
     $check_username_query = mysqli_query($conn, "SELECT username FROM users WHERE username='$username'");
   }
+
+  // Profile picture assignment
+  $rand = rand(1, 2); // Random number between 1 and 2
+
+  if ($rand == 1)
+    $profile_pic = 'assets/images/profile_pics/defaults/man.jpg';
+  else if ($rand == 2)
+    $profile_pic = 'assets/images/profile_pics/defaults/woman.jpg';
+
+  $query = mysqli_query($conn, "INSERT INTO users VALUES (NULL,'$fname', '$lname','$username', '$em', '$password', '$date', '$profile_pic', '0', '0', 'no', ',')");
+
+  array_push($error_array, "<span style='color: #14C800;'>You're all set! Go ahead and login!</span><br>");
+
+  // Clear session variables
+  $_SESSION['reg_fname'] = "";
+  $_SESSION['reg_lname'] = "";
+  $_SESSION['reg_email'] = "";
+  $_SESSION['reg_email2'] = "";
 }
 
-// Profile picture assignment
-$rand = rand(1, 2); // Random number between 1 and 2
 
-if ($rand == 1) {
-  $profile_pic = 'assets/images/profile_pics/defaults/man.jpg';
-} else if ($rand == 2) {
-  $profile_pic = 'assets/images/profile_pics/defaults/woman.jpg';
-}
 
-$query = mysqli_query($conn, "INSERT INTO users VALUES ('','$fname', '$lname','$username', '$em', '$password', '$date', '$profile_pic', '0', '0', 'no', ',')");
 
 
 
@@ -164,13 +178,16 @@ $query = mysqli_query($conn, "INSERT INTO users VALUES ('','$fname', '$lname','$
 
     <input type="password" name="reg_password" placeholder="Password" required>
     <br>
+    <input type="password" name="reg_password2" placeholder="Confirm Password" required>
+    <br>
     <?php if (in_array("Your passwords do not match<br>", $error_array)) echo "Your passwords do not match<br>";
     else if (in_array("Password must only contain letters and numbers<br>", $error_array)) echo "Password must only contain letters and numbers<br>";
     else if (in_array("Password must be between 5 and 30 characters<br>", $error_array)) echo "Password must be between 5 and 30 characters<br>"; ?>
 
-    <input type="password" name="reg_password2" placeholder="Confirm Password" required>
-    <br>
     <input type="submit" name="reg_button" value="Register">
+
+    <?php if (in_array("<span style='color: #14C800;'>You're all set! Go ahead and login!</span><br>", $error_array)) echo "<span style='color: #14C800;'>You're all set! Go ahead and login!</span><br>"; ?>
+
   </form>
 
 </body>
